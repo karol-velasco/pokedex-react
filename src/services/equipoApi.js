@@ -29,3 +29,27 @@ export const agregarAlEquipo = async (pokemon) => {
 
     return await respuesta.json();
 };
+
+export const actualizarPokemon =
+    async (id, cambios) => {
+
+        const respuesta = await fetch(
+            `${API}/${id}`,
+            {
+                method: "PATCH",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+                body: JSON.stringify(cambios)
+            }
+        );
+
+        if (!respuesta.ok) {
+            throw new Error(
+                "No se pudo actualizar"
+            );
+        }
+
+        return await respuesta.json();
+    };
