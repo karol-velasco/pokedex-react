@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { obtenerEquipo, actualizarPokemon } from "../services/equipoApi";
+import {
+  obtenerEquipo,
+  actualizarPokemon,
+  eliminarPokemon,
+} from "../services/equipoApi";
 
 function MiEquipo({ actualizarEquipo }) {
   const [equipo, setEquipo] = useState([]);
@@ -30,6 +34,11 @@ function MiEquipo({ actualizarEquipo }) {
     cargarEquipo();
   };
 
+  const liberarPokemon = async (id) => {
+    await eliminarPokemon(id);
+    cargarEquipo();
+  };
+
   return (
     <section>
       <h2>Mi Equipo Pokémon</h2>
@@ -48,6 +57,10 @@ function MiEquipo({ actualizarEquipo }) {
 
             <button onClick={() => cambiarFavorito(pokemon)}>
               {pokemon.favorito ? "Quitar favorito" : "Marcar favorito"}
+            </button>
+
+            <button onClick={() => liberarPokemon(pokemon.id)}>
+              Liberar Pokémon
             </button>
           </article>
         ))

@@ -6,6 +6,13 @@
       "nivel": 9,
       "favorito": false,
       "id": "H1noq9vNNTA"
+    },
+    {
+      "nombre": "victini",
+      "imagen": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/494.png",
+      "nivel": 1,
+      "favorito": false,
+      "id": "MbCqnr0stBA"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
