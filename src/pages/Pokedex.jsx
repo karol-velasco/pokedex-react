@@ -3,81 +3,258 @@ import { buscarPokemon } from "../services/pokeApi";
 import { agregarAlEquipo } from "../services/equipoApi";
 
 function Pokedex({ onPokemonAgregado }) {
+
   const [busqueda, setBusqueda] = useState("");
   const [pokemon, setPokemon] = useState(null);
   const [error, setError] = useState("");
+  const [cargando, setCargando] = useState(false);
 
   const buscar = async () => {
-    try {
-      setError("");
-      const datos = await buscarPokemon(busqueda);
-      setPokemon(datos);
-    } catch (error) {
-      setPokemon(null);
-      setError(error.message);
-    }
-  };
 
-  const agregarPokemon = async () => {
-    if (!pokemon) {
+    if (!busqueda.trim()) {
+      setError("Escribe el nombre de un Pokémon");
       return;
     }
 
-    const nuevoPokemon = {
-      nombre: pokemon.name,
-      imagen: pokemon.sprites.front_default,
-      nivel: 1,
-      favorito: false,
-    };
-
     try {
-      await agregarAlEquipo(nuevoPokemon);
-      onPokemonAgregado();
-      alert(`${pokemon.name} fue agregado al equipo`);
+
+      setCargando(true);
+      setError("");
+      setPokemon(null);
+
+      const datos = await buscarPokemon(busqueda);
+
+      setPokemon(datos);
+
     } catch (error) {
+
       setError(error.message);
+
+    } finally {
+
+      setCargando(false);
+
     }
   };
 
+
+  const agregarPokemon = async () => {
+
+    if (!pokemon) return;
+
+    const nuevoPokemon = {
+
+      nombre: pokemon.name,
+
+      imagen:
+        pokemon.sprites.other?.["official-artwork"]?.front_default ||
+        pokemon.sprites.front_default,
+
+      nivel: 1,
+
+      favorito: false
+    };
+
+    try {
+
+      await agregarAlEquipo(nuevoPokemon);
+
+      onPokemonAgregado();
+
+      alert(`${pokemon.name} fue agregado a tu equipo 💜`);
+
+    } catch (error) {
+
+      setError(error.message);
+
+    }
+  };
+
+
+  const manejarEnter = (evento) => {
+
+    if (evento.key === "Enter") {
+      buscar();
+    }
+
+  };
+
+
   return (
-    <section>
-      <h2>Buscar Pokémon</h2>
 
-      <input
-        type="text"
-        value={busqueda}
-        placeholder="Ejemplo: pikachu"
-        onChange={(evento) => setBusqueda(evento.target.value)}
-      />
+    <section className="search-section" id="buscar">
 
-      <button onClick={buscar}>Buscar</button>
+      <div className="section-title">
 
-      {error && <p>{error}</p>}
+        <span>POKÉDEX</span>
+
+        <h2>Busca un Pokémon</h2>
+
+        <p>
+          Escribe el nombre o número del Pokémon que quieres conocer.
+        </p>
+
+      </div>
+
+
+      <div className="search-box">
+
+        <div className="search-input">
+
+          <span>⌕</span>
+
+          <input
+            type="text"
+            value={busqueda}
+            placeholder="Ejemplo: pikachu"
+            onChange={(evento) =>
+              setBusqueda(evento.target.value)
+            }
+            onKeyDown={manejarEnter}
+          />
+
+        </div>
+
+        <button onClick={buscar}>
+          {cargando ? "Buscando..." : "Buscar"}
+        </button>
+
+      </div>
+
+
+      {error && (
+
+        <div className="error-message">
+          ⚠️ {error}
+        </div>
+
+      )}
+
 
       {pokemon && (
-        <article>
-          <h2>{pokemon.name}</h2>
 
-          <img src={pokemon.sprites.front_default} alt={pokemon.name} />
+        <article className="pokemon-result">
 
-          <p>Altura: {pokemon.height}</p>
-          <p>Peso: {pokemon.weight}</p>
+          <div className="pokemon-image-container">
 
-          {pokemon && (
-            <article>
-              <h2>{pokemon.name}</h2>
+            <div className="pokemon-number">
+              #{String(pokemon.id).padStart(3, "0")}
+            </div>
 
-              <img src={pokemon.sprites.front_default} alt={pokemon.name} />
+            <img
+              src={
+                pokemon.sprites.other?.["official-artwork"]?.front_default ||
+                pokemon.sprites.front_default
+              }
+              alt={pokemon.name}
+            />
 
-              <p>Altura: {pokemon.height}</p>
-              <p>Peso: {pokemon.weight}</p>
+          </div>
 
-              <button onClick={agregarPokemon}>Agregar a mi equipo</button>
-            </article>
-          )}
+
+          <div className="pokemon-information">
+
+            <span className="pokemon-label">
+              POKÉMON ENCONTRADO
+            </span>
+
+            <h3>
+              {pokemon.name}
+            </h3>
+
+
+            <div className="types">
+
+              {pokemon.types.map((tipo) => (
+
+                <span
+                  className={`type type-${tipo.type.name}`}
+                  key={tipo.type.name}
+                >
+                  {tipo.type.name}
+                </span>
+
+              ))}
+
+            </div>
+
+
+            <div className="pokemon-details">
+
+              <div>
+                <span>Altura</span>
+                <strong>{pokemon.height / 10} m</strong>
+              </div>
+
+              <div>
+                <span>Peso</span>
+                <strong>{pokemon.weight / 10} kg</strong>
+              </div>
+
+              <div>
+                <span>Experiencia</span>
+                <strong>{pokemon.base_experience}</strong>
+              </div>
+
+            </div>
+
+
+            <h4>Estadísticas base</h4>
+
+            <div className="stats">
+
+              {pokemon.stats.slice(0, 4).map((stat) => (
+
+                <div className="stat" key={stat.stat.name}>
+
+                  <div className="stat-name">
+
+                    <span>
+                      {stat.stat.name}
+                    </span>
+
+                    <strong>
+                      {stat.base_stat}
+                    </strong>
+
+                  </div>
+
+                  <div className="stat-bar">
+
+                    <span
+                      style={{
+                        width: `${Math.min(
+                          stat.base_stat / 2,
+                          100
+                        )}%`
+                      }}
+                    ></span>
+
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
+
+
+            <button
+              className="add-button"
+              onClick={agregarPokemon}
+            >
+              <span>♡</span>
+              Agregar a mi equipo
+            </button>
+
+          </div>
+
         </article>
+
       )}
+
     </section>
+
   );
 }
 

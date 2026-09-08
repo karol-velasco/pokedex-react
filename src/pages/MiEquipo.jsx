@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   obtenerEquipo,
   actualizarPokemon,
@@ -11,7 +12,10 @@ function MiEquipo({ actualizarEquipo }) {
 
   const cargarEquipo = async () => {
     try {
+      setError("");
+
       const datos = await obtenerEquipo();
+
       setEquipo(datos);
     } catch (error) {
       setError(error.message);
@@ -23,47 +27,117 @@ function MiEquipo({ actualizarEquipo }) {
   }, [actualizarEquipo]);
 
   const subirNivel = async (pokemon) => {
-    await actualizarPokemon(pokemon.id, { nivel: pokemon.nivel + 1 });
+    await actualizarPokemon(pokemon.id, {
+      nivel: pokemon.nivel + 1,
+    });
 
     cargarEquipo();
   };
 
   const cambiarFavorito = async (pokemon) => {
-    await actualizarPokemon(pokemon.id, { favorito: !pokemon.favorito });
+    await actualizarPokemon(pokemon.id, {
+      favorito: !pokemon.favorito,
+    });
 
     cargarEquipo();
   };
 
   const liberarPokemon = async (id) => {
+    const confirmar = window.confirm(
+      "¿Seguro que quieres liberar este Pokémon?",
+    );
+
+    if (!confirmar) return;
+
     await eliminarPokemon(id);
+
     cargarEquipo();
   };
 
   return (
-    <section>
-      <h2>Mi Equipo Pokémon</h2>
+    <section className="team-section" id="equipo">
+      <div className="team-heading">
+        <div>
+          <span>MI COLECCIÓN</span>
 
-      {error && <p>{error}</p>}
+          <h2>Mi equipo Pokémon</h2>
+
+          <p>Los Pokémon que forman parte de tu aventura.</p>
+        </div>
+
+        <div className="team-counter">
+          <strong>{equipo.length}</strong>
+
+          <span>Pokémon</span>
+        </div>
+      </div>
+
+      {error && <div className="error-message">⚠️ {error}</div>}
 
       {equipo.length === 0 ? (
-        <p>Todavía no tienes Pokémon en tu equipo.</p>
+        <div className="empty-team">
+          <div className="empty-icon">◒</div>
+
+          <h3>Tu equipo está vacío</h3>
+
+          <p>Busca tu primer Pokémon y agrégalo para comenzar tu aventura.</p>
+
+          <a href="#buscar">Buscar Pokémon</a>
+        </div>
       ) : (
-        equipo.map((pokemon) => (
-          <article key={pokemon.id}>
-            <h3>{pokemon.nombre}</h3>
-            <img src={pokemon.imagen} alt={pokemon.nombre} />
-            <p>Nivel: {pokemon.nivel}</p>
-            <button onClick={() => subirNivel(pokemon)}>Subir nivel</button>
+        <div className="team-grid">
+          {equipo.map((pokemon) => (
+            <article
+              className={`team-card ${pokemon.favorito ? "favorite" : ""}`}
+              key={pokemon.id}
+            >
+              {pokemon.favorito && (
+                <div className="favorite-badge">♥ Favorito</div>
+              )}
 
-            <button onClick={() => cambiarFavorito(pokemon)}>
-              {pokemon.favorito ? "Quitar favorito" : "Marcar favorito"}
-            </button>
+              <button
+                className="heart-button"
+                onClick={() => cambiarFavorito(pokemon)}
+              >
+                {pokemon.favorito ? "♥" : "♡"}
+              </button>
 
-            <button onClick={() => liberarPokemon(pokemon.id)}>
-              Liberar Pokémon
-            </button>
-          </article>
-        ))
+              <div className="team-image">
+                <img src={pokemon.imagen} alt={pokemon.nombre} />
+              </div>
+
+              <div className="team-info">
+                <span className="team-level">NIVEL {pokemon.nivel}</span>
+
+                <h3>{pokemon.nombre}</h3>
+
+                <div className="level-progress">
+                  <span
+                    style={{
+                      width: `${Math.min(pokemon.nivel * 10, 100)}%`,
+                    }}
+                  ></span>
+                </div>
+
+                <div className="team-actions">
+                  <button
+                    className="level-button"
+                    onClick={() => subirNivel(pokemon)}
+                  >
+                    ↑ Subir nivel
+                  </button>
+
+                  <button
+                    className="delete-button"
+                    onClick={() => liberarPokemon(pokemon.id)}
+                  >
+                    Liberar
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
       )}
     </section>
   );

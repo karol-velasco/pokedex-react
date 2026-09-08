@@ -4,7 +4,7 @@
       "nombre": "pikachu",
       "imagen": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png",
       "nivel": 9,
-      "favorito": false,
+      "favorito": true,
       "id": "H1noq9vNNTA"
     },
     {
