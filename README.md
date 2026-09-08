@@ -1,16 +1,43 @@
-# React + Vite
+# Pokédex React
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+## Objetivo del proyecto
 
-Currently, two official plugins are available:
+El objetivo de este proyecto es crear una aplicación en React que permita consultar información de Pokémon usando una API externa y también crear un equipo Pokémon usando una API local. Con este proyecto practiqué el consumo de APIs y las operaciones básicas de un CRUD.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tecnologías utilizadas
 
-## React Compiler
+* React
+* JavaScript
+* Vite
+* HTML y CSS
+* Fetch
+* PokéAPI
+* JSON Server
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## PokéAPI
 
-## Expanding the Oxlint configuration
+PokéAPI es una API externa que utilizo para consultar información real de los Pokémon. En el proyecto puedo buscar un Pokémon por su nombre o número y mostrar algunos de sus datos, como su nombre, imagen, altura y peso.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+La consulta a PokéAPI se realiza principalmente utilizando el método **GET**, ya que solamente estamos consultando información.
+
+## JSON Server
+
+JSON Server se utiliza como una API local para practicar las operaciones CRUD. En este proyecto sirve para guardar los Pokémon que agrego a mi equipo y poder consultarlos, modificarlos o eliminarlos.
+
+Los datos se guardan en el archivo db.json.
+
+## Explicación 
+
+* GET:sirve para consultar o traer información. Lo utilizo para mostrar los Pokémon de mi equipo.
+* POST:sirve para crear información nueva. Lo utilizo para agregar un Pokémon a mi equipo.
+* PATCH: sirve para modificar información. Lo utilizo para cambiar el nivel o marcar un Pokémon como favorito.
+* DELETE:sirve para eliminar información. Lo utilizo para liberar un Pokémon de mi equipo.
+
+## Instrucciones
+
+* npm install: Instalar las dependencias del proyecto
+
+* npm run dev: Para iniciar la aplicación de React
+
+* npm run api: Para iniciar la API local con JSON Server
+
